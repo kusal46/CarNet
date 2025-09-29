@@ -110,15 +110,43 @@
 		<artifactId>spring-security-test</artifactId>
 		<scope>test</scope>
 		</dependency>
+		<!-- JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- if you don’t already have these -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		
 	</dependencies>
-
+		
 	<build>
 		<plugins>
 		<plugin>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-maven-plugin</artifactId>
 			<configuration>
-			<!-- allows running `mvnw spring-boot:run -DskipTests` without tests -->
 			<excludes>
 				<exclude>
 				<groupId>org.projectlombok</groupId>
@@ -127,7 +155,6 @@
 			</excludes>
 			</configuration>
 		</plugin>
-		<!-- compiler is managed by Spring Boot parent; this is optional for clarity -->
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-compiler-plugin</artifactId>
@@ -138,7 +165,6 @@
 		</plugins>
 	</build>
 
-	<!-- Optional: profile to quickly boot with in-memory H2 for dev/demo -->
 	<profiles>
 		<profile>
 		<id>h2-dev</id>
@@ -151,4 +177,8 @@
 		</dependencies>
 		</profile>
 	</profiles>
+
+	<!-- add inside <dependencies> -->
+<!-- JWT -->
+
 </project>
