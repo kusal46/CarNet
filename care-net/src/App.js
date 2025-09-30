@@ -3,6 +3,8 @@ import { auth } from "./auth";
 import Signup from "./Pages/Public/Signup";
 import Login from "./Pages/Public/Login";
 import CaregiverProfile from "./Pages/ProfileManager/CaregiverProfile";
+import CaregiverDetailsAdd from "./Pages/ProfileManager/CaregiverDetailsAdd";
+
 
 
 // simple guards
@@ -43,6 +45,13 @@ export default function App() {
             <CaregiverProfile />
           </Protected>
         } />
+
+        <Route path="/caregivers/add-details" element={
+          <Protected allow={["CAREGIVER"]}>
+            <CaregiverDetailsAdd />
+          </Protected>
+        } />
+
         <Route path="/admin" element={
           <Protected allow={["ADMIN"]}>
             <Placeholder title="Admin Dashboard" />
