@@ -1,382 +1,261 @@
-import { useMemo } from "react";
-import {
-    MapPin,
-    ShieldCheck,
-    Clock,
-    Star,
-    Link as LinkIcon,
-    Pencil,
-    Plus,
-    ChevronRight,
-    } from "lucide-react";
+// src/Pages/ProfileManager/CaregiverProfile.js
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 
-    export default function CaregiverProfile() {
-    // TODO: replace these with real data from your API
-    const profile = useMemo(
-        () => ({
-        name: "Thanuja N.",
-        verified: true,
-        location: "Colombo, Sri Lanka",
-        localTime: "5:14 pm local time",
-        hourlyRate: 15,
-        title: "A Frontend web designer with React.js experience",
-        bio:
-            "Hello! Welcome to my profile. I'm a professional motion graphic designer and video animator. I have two years of experience working as a freelancer. Below is a sample of some of the projects I have done so far.",
-        software: [
-            "Adobe After Effects",
-            "Adobe Photoshop",
-            "Adobe Premiere Pro",
-            "Adobe Illustrator",
-        ],
-        portfolio: [
-            {
-            id: "1",
-            title: "Gaming Website Landing Page UI Designing",
-            image:
-                "https://images.unsplash.com/photo-1607259471882-37f3d44a3f66?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-            id: "2",
-            title: "Mobile UI/UX Design",
-            image:
-                "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop",
-            },
-            {
-            id: "3",
-            title:
-                "Website Landing pages and Dashboard UI/UX Design",
-            image:
-                "https://images.unsplash.com/photo-1551281044-8d8c6d97efc7?q=80&w=1200&auto=format&fit=crop",
-            },
-        ],
-        connects: 110,
-        hoursPerWeek: "< 30 hrs/week",
-        noContractPref: true,
-        languages: [
-            { name: "English", level: "Fluent" },
-            { name: "Spanish", level: "Basic" },
-        ],
-        verifications: [{ name: "ID", status: "Unverified" }],
-        skills: [
-            "Adobe After Effects",
-            "Adobe Illustrator",
-            "Adobe XD",
-            "Logo Animation",
-            "Video Editing",
-            "Graphics",
-            "Premiere Pro",
-            "Maxon Cinema 4D",
-            "UI/UX Prototyping",
-            "Blender",
-            "Motion Graphics",
-            "UI Animation",
-            "Mobile UI Design",
-        ],
-        workHistory: [],
-        projectCatalog: [],
-        social: [{ label: "See public view", href: "/" }],
-        }),
-        []
-    );
+const BASE = "http://localhost:8080";
 
-    return (
-        <div className="min-h-screen bg-neutral-50">
-        {/* Top bar */}
-        <div className="border-b bg-white">
-            <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full overflow-hidden">
-                <img
-                    alt={profile.name}
-                    className="h-full w-full object-cover"
-                    src="https://i.pravatar.cc/120?img=5"
-                />
-                </div>
-                <div className="leading-tight">
-                <div className="flex items-center gap-2">
-                    <h1 className="font-semibold">{profile.name}</h1>
-                    {profile.verified && (
-                    <span className="inline-flex items-center gap-1 text-emerald-600 text-xs">
-                        <ShieldCheck className="h-4 w-4" />
-                        Verify your identity
-                    </span>
-                    )}
-                </div>
-                <div className="text-xs text-neutral-500 flex items-center gap-2">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {profile.location} – {profile.localTime}
-                </div>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-                {profile.social.map((s) => (
-                <a
-                    key={s.label}
-                    href={s.href}
-                    className="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:bg-blue-50"
-                >
-                    <LinkIcon className="h-4 w-4" />
-                    {s.label}
-                </a>
-                ))}
-                <button className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
-                Profile settings
-                </button>
-            </div>
-            </div>
-        </div>
-
-        {/* Main */}
-        <div className="mx-auto max-w-7xl px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left column (sidebar) */}
-            <aside className="lg:col-span-3 space-y-4">
-            <Card>
-                <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Promote with ads</h3>
-                <Pencil className="h-4 w-4 text-neutral-400" />
-                </div>
-                <div className="mt-3 text-sm text-neutral-600 space-y-3">
-                <Row label="Availability badge" value="Off" />
-                <Row label="Boost your profile" value="Off" />
-                </div>
-            </Card>
-
-            <Card>
-                <h3 className="font-semibold">Connects: {profile.connects}</h3>
-                <div className="mt-3 flex gap-2">
-                <button className="btn-outline">View details</button>
-                <button className="btn-outline">Buy Connects</button>
-                </div>
-            </Card>
-
-            <Card>
-                <h3 className="font-semibold">Video introduction</h3>
-                <button className="mt-3 btn-icon">
-                <Plus className="h-4 w-4" />
-                </button>
-            </Card>
-
-            <Card>
-                <h3 className="font-semibold">Hours per week</h3>
-                <div className="mt-2 text-sm text-neutral-700">
-                {profile.hoursPerWeek}
-                </div>
-                {profile.noContractPref && (
-                <div className="text-xs text-neutral-500">
-                    No contract-to-hire preference set
-                </div>
-                )}
-            </Card>
-
-            <Card>
-                <h3 className="font-semibold">Languages</h3>
-                <ul className="mt-2 space-y-1 text-sm">
-                {profile.languages.map((l) => (
-                    <li key={l.name} className="flex justify-between">
-                    <span>{l.name}</span>
-                    <span className="text-neutral-500">{l.level}</span>
-                    </li>
-                ))}
-                </ul>
-            </Card>
-
-            <Card>
-                <h3 className="font-semibold">Verifications</h3>
-                <ul className="mt-2 space-y-2 text-sm">
-                {profile.verifications.map((v) => (
-                    <li key={v.name} className="flex items-center justify-between">
-                    <span>{v.name}: </span>
-                    <span className="text-neutral-500">{v.status}</span>
-                    </li>
-                ))}
-                </ul>
-            </Card>
-            </aside>
-
-            {/* Right column (main content) */}
-            <main className="lg:col-span-9 space-y-6">
-            <Card>
-                <div className="flex items-start justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2">
-                    <h2 className="font-semibold">
-                        {profile.title}
-                    </h2>
-                    <button className="btn-icon" title="Edit title">
-                        <Pencil className="h-4 w-4" />
-                    </button>
-                    </div>
-                    <p className="mt-2 text-sm text-neutral-700 max-w-3xl">
-                    {profile.bio}
-                    </p>
-                    <div className="mt-3 text-xs text-neutral-500">
-                    <span className="font-medium text-neutral-700">
-                        Types of Software I Work With:
-                    </span>{" "}
-                    {profile.software.join(", ")}.
-                    </div>
-                </div>
-
-                <Rate rate={profile.hourlyRate} />
-                </div>
-            </Card>
-
-            {/* Portfolio */}
-            <Card>
-                <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Portfolio</h3>
-                <div className="flex items-center gap-2">
-                    <Tab active>Published</Tab>
-                    <Tab>Drafts</Tab>
-                </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {profile.portfolio.map((p) => (
-                    <PortfolioCard key={p.id} item={p} />
-                ))}
-                </div>
-
-                <div className="mt-4 flex items-center justify-end gap-2 text-sm text-emerald-700">
-                <button className="inline-flex items-center gap-1 hover:underline">
-                    more <ChevronRight className="h-4 w-4" />
-                </button>
-                </div>
-            </Card>
-
-            {/* Work history */}
-            <Card>
-                <h3 className="font-semibold">Work history</h3>
-                {profile.workHistory.length === 0 ? (
-                <p className="mt-2 text-sm text-neutral-500">No items</p>
-                ) : (
-                <ul className="mt-3 space-y-3">
-                    {profile.workHistory.map((w) => (
-                    <li key={w.id}>{w.title}</li>
-                    ))}
-                </ul>
-                )}
-            </Card>
-
-            {/* Skills */}
-            <Card>
-                <div className="flex items-center justify-between">
-                <h3 className="font-semibold">Skills</h3>
-                <button className="btn-icon" title="Edit skills">
-                    <Pencil className="h-4 w-4" />
-                </button>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                {profile.skills.map((s) => (
-                    <span
-                    key={s}
-                    className="rounded-2xl border px-3 py-1 text-sm bg-white"
-                    >
-                    {s}
-                    </span>
-                ))}
-                </div>
-            </Card>
-
-            {/* Project catalog (placeholder) */}
-            <Card>
-                <h3 className="font-semibold">Your project catalog</h3>
-                <p className="mt-2 text-sm text-neutral-600">
-                Create projects as a way to earn on our platform.{" "}
-                <a href="#" className="text-emerald-700 hover:underline">
-                    Create a project
-                </a>
-                .
-                </p>
-            </Card>
-            </main>
-        </div>
-        </div>
-    );
+function toArray(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    if (typeof value === "string") {
+      return value.split(",").map(v => v.trim()).filter(Boolean);
     }
-
-    /* ---------- Small building blocks ---------- */
-
-    function Card({ children }) {
-    return (
-        <section className="rounded-2xl border bg-white p-4 shadow-sm">{children}</section>
-    );
-    }
-
-    function Row({ label, value }) {
-    return (
-        <div className="flex items-center justify-between">
-        <span className="text-sm text-neutral-600">{label}</span>
-        <span className="text-sm">{value}</span>
-        </div>
-    );
-    }
-
-    function Tab({ children, active = false }) {
-    return (
-        <button
-        className={
-            "rounded-full px-3 py-1 text-sm " +
-            (active
-            ? "bg-neutral-900 text-white"
-            : "border text-neutral-700 hover:bg-neutral-50")
-        }
-        >
-        {children}
-        </button>
-    );
-    }
-
-    function Rate({ rate }) {
-    return (
-        <div className="shrink-0 text-right">
-        <div className="text-sm text-neutral-500">/hr</div>
-        <div className="text-2xl font-semibold">${rate.toFixed(2)}</div>
-        <div className="mt-1 flex items-center justify-end gap-1 text-xs text-amber-600">
-            <Star className="h-4 w-4 fill-current" />
-            Top Rated
-        </div>
-        </div>
-    );
-    }
-
-    function PortfolioCard({ item }) {
-    return (
-        <article className="overflow-hidden rounded-2xl border bg-white">
-        <div className="aspect-[16/10] w-full overflow-hidden">
-            <img
-            alt={item.title}
-            src={item.image}
-            className="h-full w-full object-cover"
-            loading="lazy"
-            />
-        </div>
-        <div className="p-3">
-            <h4 className="text-sm font-medium leading-snug">{item.title}</h4>
-        </div>
-        </article>
-    );
-    }
-
-    /* Utility buttons */
-    function BtnBase({ className = "", ...props }) {
-    return (
-        <button
-        className={
-            "inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm " +
-            className
-        }
-        {...props}
-        />
-    );
-    }
-    function BtnOutline(props) {
-    return <BtnBase className="hover:bg-neutral-50" {...props} />;
-    }
-    function BtnIcon(props) {
-    return <BtnBase className="p-2 text-neutral-500" {...props} />;
+    return [];
+  }
 }
 
-// Expose utility classes
-const button = "inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:bg-neutral-50";
+export default function CaregiverProfile() {
+  const params = useParams();
+  const [search] = useSearchParams();
+
+  // supports /caregivers/:id OR /caregivers/home?id=2
+  const routeId = params.id;
+  const queryId = search.get("id");
+  const storedId = localStorage.getItem("lastCaregiverId");
+  const id = routeId ?? queryId ?? storedId ?? null;
+
+  const [cg, setCg] = useState(null);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      setErr("No caregiver id provided. Open as /caregivers/2 or /caregivers/home?id=2");
+      return;
+    }
+
+    setErr("");
+    setLoading(true);
+
+    fetch(`${BASE}/api/caregivers/${id}`)
+      .then(async (r) => {
+        if (!r.ok) {
+          const t = await r.text();
+          throw new Error(`${r.status}: ${t || r.statusText}`);
+        }
+        return r.json();
+      })
+      .then((data) => setCg(data))
+      .catch((e) => setErr(e.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  const avatarUrl = useMemo(() => {
+    if (!cg?.avatarPath) return null;
+    if (!cg.avatarPath.startsWith("http")) {
+      // If you have FilesController mapped to /files/**
+      return `${BASE}/files/${cg.avatarPath.replace(/^\/+/, "")}`;
+    }
+    return cg.avatarPath;
+  }, [cg]);
+
+  const languages = useMemo(() => toArray(cg?.languages), [cg]);
+  const skills = useMemo(() => toArray(cg?.skills), [cg]);
+  const services = useMemo(() => toArray(cg?.services), [cg]);
+
+  function formatRate(v) {
+    if (v == null) return "-";
+    const num = typeof v === "number" ? v : Number(v);
+    return Number.isFinite(num) ? `$${num.toFixed(2)}/hr` : String(v);
+  }
+
+  if (loading) return <div style={{ padding: 20 }}>Loading…</div>;
+  if (err) {
+    return (
+      <div style={{ padding: 20, color: "crimson" }}>
+        Failed to load caregiver {id ? `#${id}` : ""}.<br />
+        Error: {err}
+      </div>
+    );
+  }
+  if (!cg) return <div style={{ padding: 20 }}>No data.</div>;
+
+  return (
+    <div style={{ maxWidth: 900, margin: "30px auto", padding: 20 }}>
+      <Link to="/caregivers" style={{ textDecoration: "none" }}>
+        &larr; Back to list
+      </Link>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "180px 1fr",
+          gap: 20,
+          marginTop: 20,
+        }}
+      >
+        <div>
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={`${cg.name} avatar`}
+              style={{
+                width: 180,
+                height: 180,
+                objectFit: "cover",
+                borderRadius: 12,
+                border: "1px solid #ddd",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 180,
+                height: 180,
+                display: "grid",
+                placeItems: "center",
+                borderRadius: 12,
+                border: "1px dashed #bbb",
+                color: "#888",
+              }}
+            >
+              No Photo
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h2 style={{ margin: "0 0 6px" }}>{cg.name}</h2>
+          <div style={{ color: "#666", marginBottom: 4 }}>{cg.email}</div>
+          <div style={{ color: "#666", marginBottom: 12 }}>{cg.location}</div>
+
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            <InfoPill label="Available" value={cg.available ? "Yes" : "No"} />
+            <InfoPill label="Rate" value={formatRate(cg.rate)} />
+          </div>
+        </div>
+      </div>
+
+      <Section title="Summary">
+        <p style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+          {cg.summary || "-"}
+        </p>
+      </Section>
+
+      <Section title="Languages">
+        <ChipRow items={languages} />
+      </Section>
+
+      <Section title="Skills">
+        <ChipRow items={skills} />
+      </Section>
+
+      <Section title="Services">
+        <ChipRow items={services} />
+      </Section>
+
+      <Section title="Certifications">
+        {(cg.certifications?.length ?? 0) === 0 ? (
+          <div>-</div>
+        ) : (
+          <ul style={{ paddingLeft: 18 }}>
+            {cg.certifications.map((c) => {
+              const fileHref = c.filePath
+                ? (c.filePath.startsWith("http")
+                    ? c.filePath
+                    : `${BASE}/files/${c.filePath.replace(/^\/+/, "")}`)
+                : null;
+              return (
+                <li key={c.id} style={{ marginBottom: 6 }}>
+                  <div>
+                    <strong>{c.name}</strong>
+                    {c.issuer ? ` — ${c.issuer}` : ""}
+                  </div>
+                  {fileHref && (
+                    <a href={fileHref} target="_blank" rel="noreferrer">
+                      {c.fileName || "Open file"}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Section>
+
+      <Section title="Work History">
+        {(cg.workHistory?.length ?? 0) === 0 ? (
+          <div>-</div>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {cg.workHistory.map((w) => (
+              <div
+                key={w.id}
+                style={{ padding: 12, border: "1px solid #eee", borderRadius: 10 }}
+              >
+                <div style={{ color: "#666", fontSize: 13 }}>
+                  {w.startDate || "-"} – {w.endDate || "-"}
+                </div>
+                <div style={{ marginTop: 6, whiteSpace: "pre-wrap" }}>
+                  {w.descr || "-"}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Section>
+    </div>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <section style={{ marginTop: 24 }}>
+      <h3 style={{ margin: 0 }}>{title}</h3>
+      <div style={{ marginTop: 8 }}>{children}</div>
+    </section>
+  );
+}
+
+function ChipRow({ items }) {
+  if (!items || items.length === 0) return <div>-</div>;
+  return (
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      {items.map((x, i) => (
+        <span
+          key={i}
+          style={{
+            padding: "6px 10px",
+            border: "1px solid #ddd",
+            background: "#fafafa",
+            borderRadius: 999,
+            fontSize: 13,
+          }}
+        >
+          {x}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function InfoPill({ label, value }) {
+  return (
+    <div
+      style={{
+        border: "1px solid #e5e5e5",
+        background: "#fcfcfc",
+        borderRadius: 10,
+        padding: "6px 10px",
+        fontSize: 13,
+      }}
+    >
+      <span style={{ color: "#777" }}>{label}:</span> <strong>{value}</strong>
+    </div>
+  );
+}
