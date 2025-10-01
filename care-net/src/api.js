@@ -1,15 +1,14 @@
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080";
+// src/api.js
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 export async function apiPost(path, body) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`${BASE_URL}${path}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
-    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-        const msg = data?.message || data?.error || "Request failed";
-        throw new Error(msg);
+        throw new Error(await res.text() || `HTTP ${res.status}`);
     }
-    return data;
+    return res.json();
 }
