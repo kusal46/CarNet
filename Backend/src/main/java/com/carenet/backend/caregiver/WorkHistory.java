@@ -26,6 +26,9 @@ public class WorkHistory {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+   // WorkHistory.java
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "caregiver_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference("cg-work")
     private Caregiver caregiver;
 }

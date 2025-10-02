@@ -6,7 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.List;
 
 @Getter @Setter
@@ -53,12 +53,12 @@ public class Caregiver {
     private String avatarPath;
 
     @OneToMany(mappedBy = "caregiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Certification> certifications = new ArrayList<>();
+    @com.fasterxml.jackson.annotation.JsonManagedReference("cg-cert")
+    private List<Certification> certifications;
 
     @OneToMany(mappedBy = "caregiver", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<WorkHistory> workHistory = new ArrayList<>();
+    @com.fasterxml.jackson.annotation.JsonManagedReference("cg-work")
+    private List<WorkHistory> workHistory;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
