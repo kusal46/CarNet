@@ -61,7 +61,7 @@ export default function App() {
           </Route>
 
           {/* Default: go to login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<div className="p-6">Not Found</div>} />
         </Routes>
       </BrowserRouter>
