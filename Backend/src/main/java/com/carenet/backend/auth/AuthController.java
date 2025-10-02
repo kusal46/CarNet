@@ -5,57 +5,76 @@ import com.carenet.backend.auth.dto.LoginRequest;
 import com.carenet.backend.auth.dto.RegisterRequest;
 import com.carenet.backend.user.User;
 import com.carenet.backend.user.UserRepository;
-import jakarta.validation.Valid;                                    // <-- Valid
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;        // <-- ResponseStatusException
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository repo;
-    private final PasswordEncoder encoder;
-    private final JwtService jwt;
+    private final UserRepository users;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthController(UserRepository repo, PasswordEncoder encoder, JwtService jwt) {
-        this.repo = repo;
-        this.encoder = encoder;
-        this.jwt = jwt;
+    public AuthController(UserRepository users,
+                          PasswordEncoder passwordEncoder,
+                          JwtService jwtService) {
+        this.users = users;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public AuthResponse register(@RequestBody @Valid RegisterRequest req) {
-        // 409 if duplicate
-        repo.findByEmail(req.getEmail()).ifPresent(u -> {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already registered");
-        });
+    public AuthResponse register(@RequestBody RegisterRequest req) {
+        if (users.existsByEmail(req.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
 
         User u = new User();
-        u.setName(req.getFirstName() + " " + req.getLastName());
         u.setEmail(req.getEmail());
-        u.setPasswordHash(encoder.encode(req.getPassword()));
+        u.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        u.setFirstName(req.getFirstName());
+        u.setLastName(req.getLastName());
         u.setCity(req.getCity());
         u.setAddress(req.getAddress());
-        u.setRole(req.getRole());
-        u = repo.save(u);
 
-        String token = jwt.generate(u.getId(), u.getEmail(), u.getRole().name());
-        return new AuthResponse(token, "Bearer", u.getId(), u.getRole());
+        // your DB has NOT NULL on users.name
+        String fullName = ((req.getFirstName() == null ? "" : req.getFirstName().trim()) + " "
+                + (req.getLastName() == null ? "" : req.getLastName().trim())).trim();
+        u.setName(fullName.isEmpty() ? req.getEmail() : fullName);
+
+        // roles are stored as a plain string in DB
+        u.setRole(normalizeRole(req.getRole()));
+
+        users.save(u);
+
+        String token = jwtService.generateToken(u.getId(), u.getEmail(), u.getRole());
+        return new AuthResponse(token, u.getRole(), u.getId(), u.getEmail());
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody @Valid LoginRequest req) {
-        User u = repo.findByEmail(req.getEmail())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials")); // <-- a Supplier
+    public AuthResponse login(@RequestBody LoginRequest req) {
+        User u = users.findByEmail(req.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
-        if (!encoder.matches(req.getPassword(), u.getPasswordHash())) {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        if (!passwordEncoder.matches(req.getPassword(), u.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        String token = jwt.generate(u.getId(), u.getEmail(), u.getRole().name());
-        return new AuthResponse(token, "Bearer", u.getId(), u.getRole());
+        String token = jwtService.generateToken(u.getId(), u.getEmail(), u.getRole());
+        return new AuthResponse(token, u.getRole(), u.getId(), u.getEmail());
+    }
+
+    private String normalizeRole(String input) {
+        if (input == null) return "care-seeker";
+        String r = input.trim().toLowerCase();
+        return switch (r) {
+            case "admin" -> "admin";
+            case "caregiver" -> "caregiver";
+            case "care-seeker", "careseeker", "seeker" -> "care-seeker";
+            default -> "care-seeker";
+        };
     }
 }

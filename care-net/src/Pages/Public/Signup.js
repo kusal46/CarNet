@@ -36,7 +36,7 @@ const roles = [
         auth.save(data);
         if (data.role === "CAREGIVER") navigate("/caregivers/home");
         else if (data.role === "CARE_SEEKER") navigate("/seekers/home");
-        else navigate("/");
+        else navigate("/login");
         } catch (ex) {
         setErr(ex.message);
         } finally {

@@ -1,6 +1,5 @@
 package com.carenet.backend.caregiver;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -22,8 +21,8 @@ public class Certification {
     private String mimeType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "caregiver_id") // <-- match Flyway FK
-    @JsonIgnore
+    @JoinColumn(name = "caregiver_id")
+    @com.fasterxml.jackson.annotation.JsonBackReference("cg-cert")
     private Caregiver caregiver;
 
     // getters/setters
