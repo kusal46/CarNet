@@ -1,24 +1,23 @@
-// src/App.js
+// src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./features/auth/AuthContext";
-import RequireAuth from "./features/auth/RequireAuth";
+import AuthProvider from "./auth/AuthContext";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import RoleRoute from "./auth/RoleRoute";
 
-// Layouts
-import CareGiverLayout from "./Pages/layouts/CareGiverLayout";
-import AdminLayout from "./Pages/layouts/AdminLayout";
-import CareSeekerLayout from "./Pages/layouts/CareSeekerLayout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from "./pages/Profile";
 
-// Public pages
-import Login from "./Pages/Public/Login";
-import Signup from "./Pages/Public/Signup";
+// Layouts  (⚠ keep names consistent with actual filenames)
+import AdminLayout from "./layouts/AdminLayout";
+import CareseekerLayout from "./layouts/CareSeekerLayout";
+import CaregiverLayout from "./layouts/CaregiverLayout";
 
-// Caregiver pages (protected)
-import CaregiverHome from "./Pages/ProfileManager/CaregiverProfile";
-import CaregiverAdd from "./Pages/ProfileManager/CaregiverDetailsAdd";
-import MyProfile from "./Pages/ProfileManager/CaregiverLoginDetails";              // ⬅️ NEW
-
-// Care-seeker pages (protected)
-import CareSeekerHome from "./Pages/ProfileManager/Careseeker/CareSeekerPersonalInfo";
+// Pages inside layouts
+import AdminDashboard from "./pages/AdminDashboard";
+import CareseekerDashboard from "./pages/CareseekerDashboard";
+import CaregiverDashboard from "./pages/CaregiverDashboard";
+import CareseekerProfile from "./pages/CareseekerProfile";
 
 export default function App() {
   return (
@@ -26,43 +25,64 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public */}
-          <Route element={<CareSeekerLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/unauthorized" element={<div className="p-6">Unauthorized</div>} />
-          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-          {/* Care-seeker (protected) */}
-          <Route element={<RequireAuth roles={["caregiver","care-seeker","admin"]} />}>
-            <Route element={<CareSeekerLayout />}>
-              <Route path="/care-seeker/home" element={<CareSeekerHome />} />
-            </Route>
-          </Route>
-
-          {/* Caregiver (protected) */}
-          <Route element={<RequireAuth roles={["caregiver"]} />}>
-            <Route element={<CareGiverLayout />}>
-              {/* make /caregiver redirect to /caregiver/me */}
-              <Route index element={<Navigate to="/caregiver/me" replace />} />
-              <Route path="/caregiver/me" element={<MyProfile />} />     {/* ⬅️ NEW */}
-              <Route path="/caregiver/home" element={<CaregiverHome />} />
-              <Route path="/caregiver/add" element={<CaregiverAdd />} />
-            </Route>
-          </Route>
-
-          {/* Admin (protected) */}
-          <Route element={<RequireAuth roles={["admin"]} />}>
-            <Route
-              path="/admin"
-              element={<AdminLayout onLogout={() => {}} />}
-            >
-              <Route index element={<div className="p-6">Admin dashboard</div>} />
-            </Route>
-          </Route>
-
-          {/* Default: go to login */}
+          {/* Optional: root -> login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<div className="p-6">Not Found</div>} />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <RoleRoute roles={["ADMIN"]}>
+                  <AdminLayout />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<div>Manage Users Page</div>} />
+            <Route path="reports" element={<div>Reports Page</div>} />
+            <Route path="profile" element={<Profile />} /> {/* ✅ header visible */}
+          </Route>
+
+          {/* Careseeker Routes */}
+          <Route
+            path="/careseeker"
+            element={
+              <ProtectedRoute>
+                <RoleRoute roles={["CARE_SEEKER"]}>
+                  <CareseekerLayout />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<CareseekerDashboard />} />
+            <Route path="requests" element={<div>Requests Page</div>} />
+            <Route path="profile" element={<CareseekerProfile />} />
+          </Route>
+
+          {/* Caregiver Routes */}
+          <Route
+            path="/caregiver"
+            element={
+              <ProtectedRoute>
+                <RoleRoute roles={["CAREGIVER"]}>
+                  <CaregiverLayout />
+                </RoleRoute>
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<CaregiverDashboard />} />
+            <Route path="patients" element={<div>Patients Page</div>} />
+            <Route path="schedule" element={<div>Schedule Page</div>} />
+            <Route path="profile" element={<Profile />} /> {/* ✅ header visible */}
+          </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<div className="p-8">Not Found</div>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
